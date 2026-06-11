@@ -27,7 +27,7 @@ pub async fn stop_selected(rules: &mut HashMap<String, PortForwardRule>) -> Resu
         stop_forward_force(&names, rules).await?;
         println!(
             "{} rule{} stopped.",
-            if names.len() == 1 { "Rule" } else { "Rules" }.to_string(),
+            if names.len() == 1 { "Rule" } else { "Rules" },
             if names.len() == 1 { "" } else { "s" }
         );
     } else {

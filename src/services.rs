@@ -1,12 +1,15 @@
 use crate::cmd::common::{PortForwardRule, load_rules, load_ssh_config, save_rules};
-use crate::utils::{get_listening_pids, get_pid, get_rule_process_pids, process_is_ssh, resolve_rule_pid};
+use crate::utils::{
+    get_listening_pids, get_pid, get_rule_process_pids, process_is_ssh, resolve_rule_pid,
+};
 use anyhow::{Context, Result, bail};
-use std::process::{Command, Stdio};
 use std::collections::BTreeSet;
+use std::process::{Command, Stdio};
 use std::thread;
 use std::time::Duration;
 
-pub fn load_dashboard() -> Result<(Vec<(String, PortForwardRule)>, Vec<String>)> {
+type LoadDashboardResult = Result<(Vec<(String, PortForwardRule)>, Vec<String>)>;
+pub fn load_dashboard() -> LoadDashboardResult {
     let rules = refresh_status()?;
     let hosts = ssh_hosts()?;
     Ok((rules, hosts))
@@ -143,11 +146,11 @@ pub fn start_rules(names: &[String]) -> Result<()> {
         }
 
         for stale_name in stale_duplicate_rules {
-            if let Some(stale_rule) = rules.get_mut(&stale_name) {
-                if stale_rule.status || stale_rule.pid.is_some() {
-                    stale_rule.status = false;
-                    stale_rule.pid = None;
-                }
+            if let Some(stale_rule) = rules.get_mut(&stale_name)
+                && (stale_rule.status || stale_rule.pid.is_some())
+            {
+                stale_rule.status = false;
+                stale_rule.pid = None;
             }
         }
 
@@ -200,11 +203,19 @@ pub fn start_rules(names: &[String]) -> Result<()> {
             .context("Failed to execute ssh command")?;
 
         if !status.success() {
-            bail!("Failed to start '{name}': ssh exited with status {}", status);
+            bail!(
+                "Failed to start '{name}': ssh exited with status {}",
+                status
+            );
         }
 
-        let pid = wait_for_rule_ready(rule.pid, rule.local_port, rule.remote_port, &rule.remote_host)
-            .with_context(|| format!("Failed to start '{name}'"))?;
+        let pid = wait_for_rule_ready(
+            rule.pid,
+            rule.local_port,
+            rule.remote_port,
+            &rule.remote_host,
+        )
+        .with_context(|| format!("Failed to start '{name}'"))?;
         if let Some(target) = rules.get_mut(name) {
             target.pid = Some(pid);
             target.status = true;

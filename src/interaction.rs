@@ -112,7 +112,7 @@ pub fn select_rule() -> Option<String> {
         .default(0)
         .interact_opt()
     {
-        Ok(Some(index)) if index <= names.len() - 1 => Some(names[index].clone()),
+        Ok(Some(index)) if index < names.len() => Some(names[index].clone()),
         _ => None,
     }
 }

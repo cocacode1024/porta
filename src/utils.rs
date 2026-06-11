@@ -42,7 +42,11 @@ pub fn get_listening_pids(port: u16) -> Result<Vec<u32>> {
     Ok(pids)
 }
 
-pub fn get_rule_process_pids(local_port: u16, remote_port: u16, remote_host: &str) -> Result<Vec<u32>> {
+pub fn get_rule_process_pids(
+    local_port: u16,
+    remote_port: u16,
+    remote_host: &str,
+) -> Result<Vec<u32>> {
     let ps = Command::new("ps")
         .arg("-axo")
         .arg("pid=,command=")
@@ -78,13 +82,16 @@ pub fn resolve_rule_pid(
     remote_port: u16,
     remote_host: &str,
 ) -> Result<Option<u32>> {
-    if let Some(pid) = saved_pid {
-        if process_matches_rule(pid, local_port, remote_port, remote_host)? {
-            return Ok(Some(pid));
-        }
+    if let Some(pid) = saved_pid
+        && process_matches_rule(pid, local_port, remote_port, remote_host)?
+    {
+        return Ok(Some(pid));
     }
 
-    for pid in get_rule_process_pids(local_port, remote_port, remote_host)? {
+    if let Some(pid) = get_rule_process_pids(local_port, remote_port, remote_host)?
+        .into_iter()
+        .next()
+    {
         return Ok(Some(pid));
     }
 
@@ -113,7 +120,12 @@ pub fn process_is_ssh(pid: u32) -> Result<bool> {
     Ok(String::from_utf8_lossy(&ps.stdout).contains("ssh"))
 }
 
-pub fn process_matches_rule(pid: u32, local_port: u16, remote_port: u16, remote_host: &str) -> Result<bool> {
+pub fn process_matches_rule(
+    pid: u32,
+    local_port: u16,
+    remote_port: u16,
+    remote_host: &str,
+) -> Result<bool> {
     let ps = Command::new("ps")
         .arg("-p")
         .arg(pid.to_string())
@@ -130,10 +142,8 @@ pub fn process_matches_rule(pid: u32, local_port: u16, remote_port: u16, remote_
     let loopback_signature = format!("127.0.0.1:{}:localhost:{}", local_port, remote_port);
     let legacy_signature = format!("{}:localhost:{}", local_port, remote_port);
 
-    Ok(
-        command_line.contains("ssh")
-            && command_line.contains(remote_host)
-            && command_line.contains("-L")
-            && (command_line.contains(&loopback_signature) || command_line.contains(&legacy_signature)),
-    )
+    Ok(command_line.contains("ssh")
+        && command_line.contains(remote_host)
+        && command_line.contains("-L")
+        && (command_line.contains(&loopback_signature) || command_line.contains(&legacy_signature)))
 }

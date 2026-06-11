@@ -144,4 +144,3 @@ fn maybe_detach_gui_process() -> anyhow::Result<()> {
 
     std::process::exit(0);
 }
-

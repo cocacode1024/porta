@@ -43,7 +43,7 @@ fn remove_selected(rules: &mut HashMap<String, PortForwardRule>) -> Result<()> {
         for name in to_remove {
             rules.remove(&name);
         }
-        save_rules(&rules)?;
+        save_rules(rules)?;
         println!("Rule(s) removed.");
     } else {
         println!("Rule(s) removal canceled.");
@@ -54,7 +54,7 @@ fn remove_selected(rules: &mut HashMap<String, PortForwardRule>) -> Result<()> {
 fn remove_input(names: Vec<String>, rules: &mut HashMap<String, PortForwardRule>) -> Result<()> {
     let mut to_remove = vec![];
     for name in names {
-        let _ = match rules.get(&name) {
+        match rules.get(&name) {
             Some(rule) => {
                 if rule.status {
                     println!("Rule {} is running, please stop it first.", name);
@@ -90,7 +90,7 @@ fn remove_input(names: Vec<String>, rules: &mut HashMap<String, PortForwardRule>
         for name in to_remove {
             rules.remove(&name);
         }
-        save_rules(&rules)?;
+        save_rules(rules)?;
         println!("Rule(s) removed.");
     } else {
         println!("Rule(s) removal canceled.");

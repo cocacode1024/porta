@@ -24,7 +24,7 @@ async fn check_running(
                     Err(_) => stoped_rules.push(name),
                 }
             } else {
-                if let Err(_) = get_pid(rule.local_port) {
+                if get_pid(rule.local_port).is_err() {
                     not_started_rules.push(name);
                 }
             }

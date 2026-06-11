@@ -1,14 +1,16 @@
 use crate::cmd::common::PortForwardRule;
 use crate::services;
 use anyhow::Result;
-use eframe::egui::{self, Align, Button, Color32, CornerRadius, Frame, Margin, RichText, Stroke, Vec2};
+use eframe::egui::{
+    self, Align, Button, Color32, CornerRadius, Frame, Margin, RichText, Stroke, Vec2,
+};
 use std::collections::HashMap;
 use std::sync::mpsc::{self, Receiver, Sender};
 use std::thread;
 use std::time::Instant;
 
 pub fn run() -> Result<()> {
-        let options = eframe::NativeOptions {
+    let options = eframe::NativeOptions {
         viewport: egui::ViewportBuilder::default()
             .with_inner_size([1120.0, 720.0])
             .with_min_inner_size([720.0, 520.0])
@@ -301,11 +303,12 @@ impl RspGuiApp {
                     false,
                     None,
                 );
-                if let Some(old_name) = original_name {
-                    if old_name != updated_name {
-                        self.remove_rule_from_view(&old_name);
-                    }
+                if let Some(old_name) = original_name
+                    && old_name != updated_name
+                {
+                    self.remove_rule_from_view(&old_name);
                 }
+
                 self.upsert_rule_in_view(updated_name.clone(), updated_rule);
                 self.selected = Some(updated_name);
                 self.request_refresh(None);
@@ -324,7 +327,6 @@ impl RspGuiApp {
             Err(err) => self.set_error(err.to_string()),
         }
     }
-
 }
 
 impl eframe::App for RspGuiApp {
@@ -346,10 +348,13 @@ impl eframe::App for RspGuiApp {
                     ui.horizontal(|ui| {
                         if ui
                             .add(
-                                Button::new(RichText::new("New Rule").color(button_text(self.theme_mode, true)))
-                                    .fill(primary_button_fill(self.theme_mode))
-                                    .stroke(Stroke::NONE)
-                                    .corner_radius(CornerRadius::same(16)),
+                                Button::new(
+                                    RichText::new("New Rule")
+                                        .color(button_text(self.theme_mode, true)),
+                                )
+                                .fill(primary_button_fill(self.theme_mode))
+                                .stroke(Stroke::NONE)
+                                .corner_radius(CornerRadius::same(16)),
                             )
                             .clicked()
                         {
@@ -358,10 +363,13 @@ impl eframe::App for RspGuiApp {
                         }
                         if ui
                             .add(
-                                Button::new(RichText::new("Refresh").color(button_text(self.theme_mode, false)))
-                                    .fill(secondary_button_fill(self.theme_mode))
-                                    .stroke(Stroke::new(1.0, button_stroke(self.theme_mode)))
-                                    .corner_radius(CornerRadius::same(16)),
+                                Button::new(
+                                    RichText::new("Refresh")
+                                        .color(button_text(self.theme_mode, false)),
+                                )
+                                .fill(secondary_button_fill(self.theme_mode))
+                                .stroke(Stroke::new(1.0, button_stroke(self.theme_mode)))
+                                .corner_radius(CornerRadius::same(16)),
                             )
                             .clicked()
                         {
@@ -370,12 +378,22 @@ impl eframe::App for RspGuiApp {
                         }
 
                         ui.with_layout(egui::Layout::right_to_left(Align::Center), |ui| {
-                            theme_segment(ui, self.theme_mode, "Dark", self.theme_mode == ThemeMode::Dark)
-                                .clicked()
-                                .then(|| self.set_theme_mode(ctx, ThemeMode::Dark));
-                            theme_segment(ui, self.theme_mode, "Light", self.theme_mode == ThemeMode::Light)
-                                .clicked()
-                                .then(|| self.set_theme_mode(ctx, ThemeMode::Light));
+                            theme_segment(
+                                ui,
+                                self.theme_mode,
+                                "Dark",
+                                self.theme_mode == ThemeMode::Dark,
+                            )
+                            .clicked()
+                            .then(|| self.set_theme_mode(ctx, ThemeMode::Dark));
+                            theme_segment(
+                                ui,
+                                self.theme_mode,
+                                "Light",
+                                self.theme_mode == ThemeMode::Light,
+                            )
+                            .clicked()
+                            .then(|| self.set_theme_mode(ctx, ThemeMode::Light));
                         });
                     });
                 });
@@ -801,50 +819,50 @@ fn spawn_worker(ctx: egui::Context) -> WorkerHandle {
                         completed_rules: Vec::new(),
                     },
                 },
-                WorkerCommand::Start(names, summary) => match services::start_rules(&names)
-                    .and_then(|_| services::load_dashboard())
-                {
-                    Ok((rules, hosts)) => WorkerEvent {
-                        dashboard: Some(DashboardData { rules, hosts }),
-                        message: Some(UiMessage {
-                            text: summary,
-                            error: false,
-                        }),
-                        completed_rules: names,
-                    },
-                    Err(err) => WorkerEvent {
-                        dashboard: services::load_dashboard()
-                            .ok()
-                            .map(|(rules, hosts)| DashboardData { rules, hosts }),
-                        message: Some(UiMessage {
-                            text: err.to_string(),
-                            error: true,
-                        }),
-                        completed_rules: names,
-                    },
-                },
-                WorkerCommand::Stop(names, summary) => match services::stop_rules(&names)
-                    .and_then(|_| services::load_dashboard())
-                {
-                    Ok((rules, hosts)) => WorkerEvent {
-                        dashboard: Some(DashboardData { rules, hosts }),
-                        message: Some(UiMessage {
-                            text: summary,
-                            error: false,
-                        }),
-                        completed_rules: names,
-                    },
-                    Err(err) => WorkerEvent {
-                        dashboard: services::load_dashboard()
-                            .ok()
-                            .map(|(rules, hosts)| DashboardData { rules, hosts }),
-                        message: Some(UiMessage {
-                            text: err.to_string(),
-                            error: true,
-                        }),
-                        completed_rules: names,
-                    },
-                },
+                WorkerCommand::Start(names, summary) => {
+                    match services::start_rules(&names).and_then(|_| services::load_dashboard()) {
+                        Ok((rules, hosts)) => WorkerEvent {
+                            dashboard: Some(DashboardData { rules, hosts }),
+                            message: Some(UiMessage {
+                                text: summary,
+                                error: false,
+                            }),
+                            completed_rules: names,
+                        },
+                        Err(err) => WorkerEvent {
+                            dashboard: services::load_dashboard()
+                                .ok()
+                                .map(|(rules, hosts)| DashboardData { rules, hosts }),
+                            message: Some(UiMessage {
+                                text: err.to_string(),
+                                error: true,
+                            }),
+                            completed_rules: names,
+                        },
+                    }
+                }
+                WorkerCommand::Stop(names, summary) => {
+                    match services::stop_rules(&names).and_then(|_| services::load_dashboard()) {
+                        Ok((rules, hosts)) => WorkerEvent {
+                            dashboard: Some(DashboardData { rules, hosts }),
+                            message: Some(UiMessage {
+                                text: summary,
+                                error: false,
+                            }),
+                            completed_rules: names,
+                        },
+                        Err(err) => WorkerEvent {
+                            dashboard: services::load_dashboard()
+                                .ok()
+                                .map(|(rules, hosts)| DashboardData { rules, hosts }),
+                            message: Some(UiMessage {
+                                text: err.to_string(),
+                                error: true,
+                            }),
+                            completed_rules: names,
+                        },
+                    }
+                }
             };
 
             if event_tx.send(event).is_err() {
@@ -876,7 +894,8 @@ fn configure_theme(ctx: &egui::Context, theme_mode: ThemeMode) {
     visuals.widgets.inactive.bg_fill = theme_color(theme_mode, 245, 246, 248, 40, 44, 50);
     visuals.widgets.inactive.fg_stroke.color = theme_color(theme_mode, 56, 61, 70, 226, 229, 234);
     visuals.widgets.noninteractive.bg_fill = theme_color(theme_mode, 252, 252, 253, 24, 27, 31);
-    visuals.widgets.noninteractive.fg_stroke.color = theme_color(theme_mode, 56, 61, 70, 226, 229, 234);
+    visuals.widgets.noninteractive.fg_stroke.color =
+        theme_color(theme_mode, 56, 61, 70, 226, 229, 234);
     visuals.selection.bg_fill = theme_color(theme_mode, 227, 231, 229, 62, 72, 77);
     visuals.window_corner_radius = CornerRadius::same(20);
     ctx.set_visuals(visuals);
@@ -898,7 +917,12 @@ fn theme_color(theme_mode: ThemeMode, lr: u8, lg: u8, lb: u8, dr: u8, dg: u8, db
     }
 }
 
-fn theme_segment(ui: &mut egui::Ui, theme_mode: ThemeMode, label: &str, selected: bool) -> egui::Response {
+fn theme_segment(
+    ui: &mut egui::Ui,
+    theme_mode: ThemeMode,
+    label: &str,
+    selected: bool,
+) -> egui::Response {
     ui.add(
         Button::new(RichText::new(label).color(button_text(theme_mode, selected)))
             .fill(if selected {
@@ -917,12 +941,7 @@ fn badge(ui: &mut egui::Ui, label: &str, fill: Color32, text: Color32) {
         .corner_radius(CornerRadius::same(255))
         .inner_margin(Margin::symmetric(8, 4))
         .show(ui, |ui| {
-            ui.label(
-                RichText::new(label)
-                    .size(11.0)
-                    .strong()
-                    .color(text),
-            );
+            ui.label(RichText::new(label).size(11.0).strong().color(text));
         });
 }
 
