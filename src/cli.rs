@@ -12,7 +12,7 @@ use std::env;
 use std::process::{Command, Stdio};
 
 #[derive(Parser, Debug)]
-#[command(name = "rst")]
+#[command(name = "pa")]
 #[command(about = "A SSH-based portforward tool", version)]
 pub struct Cli {
     #[command(subcommand)]

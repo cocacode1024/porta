@@ -550,7 +550,7 @@ impl eframe::App for RspGuiApp {
                                         );
                                         ui.add_space(6.0);
                                         ui.label(RichText::new("Hosts are read from ~/.ssh/config").color(secondary_text(self.theme_mode)));
-                                        ui.label(RichText::new("Rules are persisted to ~/.rsp.json").color(secondary_text(self.theme_mode)));
+                                        ui.label(RichText::new("Rules are persisted to ~/.porta.json").color(secondary_text(self.theme_mode)));
                                     });
                             });
                         });

@@ -1,6 +1,6 @@
-# RSP (Rust SSH Port Forward)
+# Porta
 
-RSP is an SSH port forwarding management tool written in Rust. It provides both a command-line interface and a desktop GUI for managing multiple SSH port forwarding rules.
+Porta is an SSH port forwarding management tool written in Rust. It provides both a command-line interface and a desktop GUI for managing multiple SSH port forwarding rules.
 
 ## Features
 
@@ -28,31 +28,31 @@ Currently only tested on macOS, compatibility with other operating systems has n
 
 ```bash
 # Launch GUI
-rsp
-rsp gui
+pa
+pa gui
 
 # Add new rule
-rsp add
+pa add
 
 # List all rules
-rsp list
-rsp ls
+pa list
+pa ls
 
 # Start rules
-rsp start [rule_name]     # Start specific rule
+pa start [rule_name]     # Start specific rule
 
 # Stop rules
-rsp stop [rule_name]      # Stop specific rule
+pa stop [rule_name]      # Stop specific rule
 
 # Remove rules
-rsp remove [rule_name]    # Remove specific rule
-rsp rm [rule_name]       # Short command for removing specific rule
+pa remove [rule_name]    # Remove specific rule
+pa rm [rule_name]       # Short command for removing specific rule
 
 # Edit rule
-rsp edit [rule_name]      # Edit specific rule
+pa edit [rule_name]      # Edit specific rule
 
 # Check rule status
-rsp check [rule_name]     # Check specific rule status
+pa check [rule_name]     # Check specific rule status
 ```
 
 ### GUI
@@ -60,13 +60,13 @@ rsp check [rule_name]     # Check specific rule status
 The GUI entry point is:
 
 ```bash
-rsp
+pa
 ```
 
 or:
 
 ```bash
-rsp gui
+pa gui
 ```
 
 Current GUI capabilities:
@@ -91,7 +91,7 @@ When adding a rule, you need to configure the following information:
 
 Example:
 ```bash
-$ rsp add
+$ pa add
 RuleName: mysql-prod
 RemoteHost: prod-server
 LocalPort: 3306
@@ -100,7 +100,7 @@ RemotePort: 3306
 
 ### Configuration File
 
-RSP saves rule configurations in the `~/.rsp.json` file. The configuration file format is as follows:
+Porta saves rule configurations in the `~/.porta.json` file. The configuration file format is as follows:
 
 ```json
 {

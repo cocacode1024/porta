@@ -13,7 +13,7 @@ pub struct PortForwardRule {
     pub pid: Option<u32>,
 }
 
-const RULES_FILE: &str = "~/.rsp.json";
+const RULES_FILE: &str = "~/.porta.json";
 
 pub fn load_rules() -> Result<HashMap<String, PortForwardRule>> {
     let path = shellexpand::tilde(RULES_FILE).into_owned();

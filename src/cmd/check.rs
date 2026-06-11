@@ -33,7 +33,7 @@ async fn check_running(
 
     if !not_started_rules.is_empty() {
         println!(
-            "{} rule{} {} not running: {}, you can start {} by 'rsp start {}'.",
+            "{} rule{} {} not running: {}, you can start {} by 'pa start {}'.",
             if not_started_rules.len() == 1 {
                 "This"
             } else {
@@ -60,7 +60,7 @@ async fn check_running(
     }
     if !running_rules.is_empty() {
         println!(
-            "{} rule{} {} running: {}, you can stop {} by 'rsp stop {}'.",
+            "{} rule{} {} running: {}, you can stop {} by 'pa stop {}'.",
             if running_rules.len() == 1 {
                 "This"
             } else {

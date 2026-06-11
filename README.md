@@ -1,8 +1,8 @@
-# RSP (Rust SSH Port Forward)
+# Porta
 
 [English](README_EN.md) | 简体中文
 
-RSP 是一个基于 SSH 的端口转发管理工具，使用 Rust 编写。它同时提供命令行界面和图形界面，方便您管理多个 SSH 端口转发规则。
+Porta 是一个基于 SSH 的端口转发管理工具，使用 Rust 编写。它同时提供命令行界面和图形界面，方便您管理多个 SSH 端口转发规则。
 
 ## 功能特点
 
@@ -31,31 +31,31 @@ RSP 是一个基于 SSH 的端口转发管理工具，使用 Rust 编写。它�
 
 ```bash
 # 启动图形界面
-rsp
-rsp gui
+pa
+pa gui
 
 # 添加新规则
-rsp add
+pa add
 
 # 列出所有规则
-rsp list
-rsp ls
+pa list
+pa ls
 
 # 启动规则
-rsp start [rule_name]     # 启动指定规则
+pa start [rule_name]     # 启动指定规则
 
 # 停止规则
-rsp stop [rule_name]      # 停止指定规则
+pa stop [rule_name]      # 停止指定规则
 
 # 删除规则
-rsp remove [rule_name]    # 删除指定规则
-rsp rm [rule_name]       # 删除指定规则的简写命令
+pa remove [rule_name]    # 删除指定规则
+pa rm [rule_name]       # 删除指定规则的简写命令
 
 # 编辑规则
-rsp edit [rule_name]      # 编辑指定规则
+pa edit [rule_name]      # 编辑指定规则
 
 # 检查规则状态
-rsp check [rule_name]     # 检查指定规则状态
+pa check [rule_name]     # 检查指定规则状态
 ```
 
 ### 图形界面
@@ -63,13 +63,13 @@ rsp check [rule_name]     # 检查指定规则状态
 图形界面默认入口为：
 
 ```bash
-rsp
+pa
 ```
 
 或：
 
 ```bash
-rsp gui
+pa gui
 ```
 
 当前图形界面支持：
@@ -94,7 +94,7 @@ rsp gui
 
 示例：
 ```bash
-$ rsp add
+$ pa add
 RuleName: mysql-prod
 RemoteHost: prod-server
 LocalPort: 3306
@@ -103,7 +103,7 @@ RemotePort: 3306
 
 ### 配置文件
 
-RSP 将规则配置保存在 `~/.rsp.json` 文件中。配置文件格式如下：
+Porta 将规则配置保存在 `~/.porta.json` 文件中。配置文件格式如下：
 
 ```json
 {
