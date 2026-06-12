@@ -12,7 +12,7 @@ use std::env;
 use std::process::{Command, Stdio};
 
 #[derive(Parser, Debug)]
-#[command(name = "pa")]
+#[command(name = "porta")]
 #[command(about = "A SSH-based portforward tool", version)]
 pub struct Cli {
     #[command(subcommand)]
@@ -119,7 +119,7 @@ impl Cli {
 
 #[cfg(target_os = "macos")]
 fn maybe_detach_gui_process() -> anyhow::Result<()> {
-    const GUI_CHILD_ENV: &str = "RSP_GUI_CHILD";
+    const GUI_CHILD_ENV: &str = "PORTA_GUI_CHILD";
 
     if env::var_os(GUI_CHILD_ENV).is_some() {
         return Ok(());

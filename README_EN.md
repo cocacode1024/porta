@@ -1,6 +1,6 @@
 # Porta
 
-Porta is an SSH port forwarding management tool written in Rust. It provides both a command-line interface and a desktop GUI for managing multiple SSH port forwarding rules.
+Porta is a SSH port forwarding management tool written in Rust. It provides both a command-line interface and a desktop GUI for managing multiple SSH port forwarding rules.
 
 ## Features
 

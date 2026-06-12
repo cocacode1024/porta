@@ -14,14 +14,14 @@ pub fn run() -> Result<()> {
         viewport: egui::ViewportBuilder::default()
             .with_inner_size([1120.0, 720.0])
             .with_min_inner_size([720.0, 520.0])
-            .with_title("RSP"),
+            .with_title("Porta"),
         ..Default::default()
     };
 
     eframe::run_native(
-        "RSP - SSH Port Forward Manager",
+        "Porta - SSH Port Forward Manager",
         options,
-        Box::new(|cc| Ok(Box::new(RspGuiApp::new(cc)))),
+        Box::new(|cc| Ok(Box::new(PortaGuiApp::new(cc)))),
     )
     .map_err(|err| anyhow::anyhow!(err.to_string()))
 }
@@ -48,7 +48,7 @@ struct WorkerEvent {
     completed_rules: Vec<String>,
 }
 
-struct RspGuiApp {
+struct PortaGuiApp {
     rules: Vec<(String, PortForwardRule)>,
     hosts: Vec<String>,
     form: RuleForm,
@@ -88,7 +88,7 @@ struct RuleForm {
     remote_host: String,
 }
 
-impl RspGuiApp {
+impl PortaGuiApp {
     fn new(cc: &eframe::CreationContext<'_>) -> Self {
         let theme_mode = ThemeMode::Light;
         configure_theme(&cc.egui_ctx, theme_mode);
@@ -329,7 +329,7 @@ impl RspGuiApp {
     }
 }
 
-impl eframe::App for RspGuiApp {
+impl eframe::App for PortaGuiApp {
     fn update(&mut self, ctx: &egui::Context, _: &mut eframe::Frame) {
         configure_theme(ctx, self.theme_mode);
         self.process_worker_events();
