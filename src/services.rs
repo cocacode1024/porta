@@ -99,6 +99,17 @@ pub fn remove_rule(name: &str) -> Result<()> {
     save_rules(&rules)
 }
 
+pub fn set_rule_pinned(name: &str, pinned: bool) -> Result<PortForwardRule> {
+    let mut rules = load_rules()?;
+    let rule = rules
+        .get_mut(name)
+        .ok_or_else(|| anyhow::anyhow!("Rule '{name}' not found"))?;
+    rule.pinned = pinned;
+    let updated_rule = rule.clone();
+    save_rules(&rules)?;
+    Ok(updated_rule)
+}
+
 pub fn start_rules(names: &[String]) -> Result<()> {
     let mut rules = load_rules()?;
     for name in names {
@@ -291,6 +302,7 @@ pub fn make_rule(
     local_port: u16,
     remote_port: u16,
     remote_host: String,
+    pinned: bool,
     status: bool,
     pid: Option<u32>,
 ) -> PortForwardRule {
@@ -298,6 +310,7 @@ pub fn make_rule(
         local_port,
         remote_port,
         remote_host,
+        pinned,
         status,
         pid,
     }

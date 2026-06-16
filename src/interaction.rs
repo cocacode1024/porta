@@ -43,6 +43,7 @@ pub fn add_rule_form() -> Result<(String, PortForwardRule)> {
         local_port,
         remote_port,
         remote_host,
+        pinned: false,
         status: false,
         pid: None,
     };
@@ -89,6 +90,7 @@ pub fn update_rule_form(
         local_port,
         remote_port,
         remote_host: host,
+        pinned: rule.pinned,
         status: rule.status,
         pid: rule.pid,
     };

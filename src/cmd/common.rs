@@ -9,6 +9,8 @@ pub struct PortForwardRule {
     pub local_port: u16,
     pub remote_port: u16,
     pub remote_host: String,
+    #[serde(default)]
+    pub pinned: bool,
     pub status: bool,
     pub pid: Option<u32>,
 }

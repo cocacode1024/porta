@@ -219,11 +219,13 @@ impl PortaGuiApp {
 
     fn sort_rules(&mut self) {
         self.rules.sort_by(|a, b| {
-            let a_running = a.1.status;
-            let b_running = b.1.status;
-            b_running
-                .cmp(&a_running)
-                .then_with(|| a.0.to_lowercase().cmp(&b.0.to_lowercase()))
+            b.1.pinned.cmp(&a.1.pinned).then_with(|| {
+                let a_running = a.1.status;
+                let b_running = b.1.status;
+                b_running
+                    .cmp(&a_running)
+                    .then_with(|| a.0.to_lowercase().cmp(&b.0.to_lowercase()))
+            })
         });
     }
 
@@ -283,8 +285,17 @@ impl PortaGuiApp {
             }
         };
 
-        let rule = services::make_rule(local_port, remote_port, remote_host, false, None);
         let original_name = self.form.original_name.clone();
+        let pinned = original_name
+            .as_ref()
+            .and_then(|current_name| {
+                self.rules
+                    .iter()
+                    .find(|(rule_name, _)| rule_name == current_name)
+                    .map(|(_, rule)| rule.pinned)
+            })
+            .unwrap_or(false);
+        let rule = services::make_rule(local_port, remote_port, remote_host, pinned, false, None);
 
         let result = if let Some(original_name) = original_name.clone() {
             services::update_rule(&original_name, name, rule)
@@ -300,6 +311,7 @@ impl PortaGuiApp {
                     local_port,
                     remote_port,
                     self.form.remote_host.trim().to_string(),
+                    pinned,
                     false,
                     None,
                 );
@@ -323,6 +335,23 @@ impl PortaGuiApp {
             Ok(_) => {
                 self.remove_rule_from_view(name);
                 self.request_refresh(None);
+            }
+            Err(err) => self.set_error(err.to_string()),
+        }
+    }
+
+    fn toggle_rule_pinned(&mut self, name: &str) {
+        let Some((_, current_rule)) = self.rules.iter().find(|(rule_name, _)| rule_name == name)
+        else {
+            self.set_error(format!("Rule '{name}' not found"));
+            return;
+        };
+        let next_pinned = !current_rule.pinned;
+        match services::set_rule_pinned(name, next_pinned) {
+            Ok(updated_rule) => {
+                self.upsert_rule_in_view(name.to_string(), updated_rule);
+                self.selected = Some(name.to_string());
+                self.message = None;
             }
             Err(err) => self.set_error(err.to_string()),
         }
@@ -662,7 +691,12 @@ impl eframe::App for PortaGuiApp {
                                     ui.vertical(|ui| {
                                         ui.horizontal(|ui| {
                                             ui.vertical(|ui| {
-                                                let title = RichText::new(&name)
+                                                let title_text = if rule.pinned {
+                                                    format!("[Top] {name}")
+                                                } else {
+                                                    name.clone()
+                                                };
+                                                let title = RichText::new(title_text)
                                                     .size(18.0)
                                                     .strong()
                                                     .color(primary_text(self.theme_mode));
@@ -684,7 +718,7 @@ impl eframe::App for PortaGuiApp {
                                         ui.add_space(6.0);
                                         ui.horizontal(|ui| {
                                             let total_width = ui.available_width();
-                                            let button_group_width = 238.0;
+                                            let button_group_width = 312.0;
                                             let meta_width = (total_width - button_group_width - 8.0).max(150.0);
                                             ui.allocate_ui_with_layout(
                                                 egui::vec2(meta_width, 0.0),
@@ -704,6 +738,21 @@ impl eframe::App for PortaGuiApp {
                                                 },
                                             );
                                             ui.with_layout(egui::Layout::right_to_left(Align::Center), |ui| {
+                                                let pin_label = if rule.pinned { "Unpin" } else { "Pin Top" };
+                                                if ui
+                                                    .add(
+                                                        Button::new(RichText::new(pin_label).color(button_text(self.theme_mode, false)))
+                                                            .fill(secondary_button_fill(self.theme_mode))
+                                                            .stroke(Stroke::new(1.0, button_stroke(self.theme_mode)))
+                                                            .corner_radius(CornerRadius::same(16))
+                                                            .min_size(egui::vec2(74.0, 30.0)),
+                                                    )
+                                                    .clicked()
+                                                {
+                                                    self.toggle_rule_pinned(&name);
+                                                    ctx.request_repaint();
+                                                }
+
                                                 if ui
                                                     .add(
                                                         Button::new(RichText::new("Delete").color(button_text(self.theme_mode, false)))
